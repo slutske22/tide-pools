@@ -1,4 +1,12 @@
-# Tide-Pool :ocean:
+# GMT Cruise Ship Table
+
+This repository contains a simple application, which fetches cruise ship data from [Global Multi-Resolution Topography Data Synthesis (GMRT)](https://www.gmrt.org/). The cursory data fetched is displayed in a table, which is sortable and filterable by the user.
+
+This project cloned and origin reset from https://github.com/Bedrock-Ocean-Open-Source/tide-pool
+
+# Original Readme
+
+From (https://github.com/Bedrock-Ocean-Open-Source/tide-pool)
 
 ## About
 
