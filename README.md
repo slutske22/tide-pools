@@ -2,7 +2,11 @@
 
 This repository contains a simple application, which fetches cruise ship data from [Global Multi-Resolution Topography Data Synthesis (GMRT)](https://www.gmrt.org/). The cursory data fetched is displayed in a table, which is sortable and filterable by the user.
 
-This project cloned and origin reset from https://github.com/Bedrock-Ocean-Open-Source/tide-pool
+Since the boilerplate code is already using redux toolkit, it was an easy choice to use RTK Query to do the data fetching. While a tiny application like this could probably stand to store data inside a component, that is rarely a good idea in complex applications.
+
+In an effort not to spend too much time on this, I kept the sort and filter state in the table component itself. This is not ideal, as you may need access to those search/sort/filter parameters outside of the table component - alternatives to this tactic would be to either store the search/sort/filter in redux, or within react-router as part of the page's url parameters. Considering the dataset is so large, these parameters should probably be available on the api, so that search/sort/filter is done on the back end, rather than on the front end.
+
+I brought in material-tailwind to make it quick and easy to set up good-looking components for tables, search bars, etc.
 
 # Original Readme
 

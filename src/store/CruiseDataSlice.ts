@@ -10,7 +10,7 @@ export const cruiseApi = createApi({
     baseUrl: 'https://www.gmrt.org/services/GmrtCruises.php',
   }),
   endpoints: (builder) => ({
-    getCruises: builder.query<Cruise, string>({
+    getCruises: builder.query<Cruise[], string>({
       query: () => '/',
     }),
   }),
