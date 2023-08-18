@@ -1,9 +1,10 @@
-import { useGetCruisesQuery } from '@/store';
+import { RootState, useGetCruisesQuery } from '@/store';
 import React from 'react';
-import { Card, Typography } from '@material-tailwind/react';
+import { Card, Typography, Input, Spinner } from '@material-tailwind/react';
 import { Cruise } from '@/models';
-import { clsx } from 'clsx';
-import { MagnifyingGlassIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { useDispatch, useSelector } from 'react-redux';
+import { filterSlice } from '@/store/SortFilterSlice';
 
 const columns: { name: string; value: keyof Cruise }[] = [
   {
@@ -38,27 +39,61 @@ const columns: { name: string; value: keyof Cruise }[] = [
 export const CruiseTable: React.FC = () => {
   const { data, error, isLoading } = useGetCruisesQuery('');
 
-  console.log(data);
+  const dispatch = useDispatch();
+
+  const search = useSelector((state: RootState) => state.filters.search);
+  const sortOrder = useSelector((state: RootState) => state.filters.sortOrder);
+  const sortColumn = useSelector((state: RootState) => state.filters.sortColumn);
+
+  const list = [...(data ?? [])]
+    .filter(
+      (cruise) =>
+        cruise.entry_id?.toLowerCase().includes(search.toLowerCase().trim()) ||
+        cruise.device_make?.toLowerCase().includes(search.toLowerCase().trim()),
+    )
+    .sort((a, b) => {
+      // @ts-expect-error TS worried about null values, doesn't matter here
+      if (a[sortColumn] > b[sortColumn]) return sortOrder === 'asc' ? -1 : 1;
+      // @ts-expect-error TS worried about null values, doesn't matter here
+      if (a[sortColumn] <= b[sortColumn]) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
 
   return (
     <main>
       <Typography variant='h1'>GMT Cruises</Typography>
+      <div className='flex justify-end w-full items-center py-3 px-3'>
+        <Typography variant='h5' className='mr-2'>
+          Search by Ship Name or Cruise Entry ID:{' '}
+        </Typography>
+        <Input
+          containerProps={{
+            style: { width: '400px' },
+          }}
+          value={search}
+          onChange={(e) => {
+            dispatch(filterSlice.actions.setSearch(e.target.value));
+          }}
+        />
+      </div>
+
       <Card className='h-full w-full overflow-scroll'>
         <table className='w-full min-w-max table-auto text-left'>
           <thead>
             <tr>
               {columns.map((column) => {
-                const sortable = column.value === 'year';
-
                 return (
                   <th
                     key={`head-cell-${column.value}`}
-                    className={clsx('border-b border-blue-gray-100 bg-blue-gray-50 p-4', {
-                      ['cursor-pointer']: sortable,
-                    })}
+                    className={'border-b border-blue-gray-100 bg-blue-gray-50 p-4 cursor-pointer'}
                     onClick={() => {
-                      if (sortable) {
-                        // TODO
+                      if (sortColumn === column.value) {
+                        dispatch(
+                          filterSlice.actions.setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'),
+                        );
+                      } else {
+                        dispatch(filterSlice.actions.setSortColumn(column.value));
+                        dispatch(filterSlice.actions.setSortOrder('asc'));
                       }
                     }}
                   >
@@ -67,7 +102,14 @@ export const CruiseTable: React.FC = () => {
                       className='font-normal leading-none opacity-70 flex'
                     >
                       {column.name}
-                      {sortable && <ChevronDownIcon strokeWidth={2} className='h-4 w-4 ml-3' />}
+                      <ChevronDownIcon
+                        strokeWidth={2}
+                        className='h-4 w-4 ml-3'
+                        style={{
+                          opacity: sortColumn === column.value ? 1 : 0,
+                          rotate: sortOrder === 'asc' ? '180deg' : undefined,
+                        }}
+                      />
                     </Typography>
                   </th>
                 );
@@ -75,9 +117,21 @@ export const CruiseTable: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {data
-              ? data.map((cruise) => (
-                  <tr key={`cruise-row-${cruise.entry_id}`}>
+            {isLoading && (
+              <tr>
+                <td colSpan={columns.length}>
+                  <Spinner className='h-12 w-12' style={{ margin: 'auto' }} />
+                </td>
+              </tr>
+            )}
+            {error && (
+              <tr>
+                <td colSpan={columns.length}>Oopens! Something went wrong...</td>
+              </tr>
+            )}
+            {list
+              ? list.map((cruise, i) => (
+                  <tr key={`cruise-row-${cruise.survey_id}-${i}`}>
                     {columns.map((column) => (
                       <td
                         key={`cell-${cruise.entry_id}-${column.value}`}
