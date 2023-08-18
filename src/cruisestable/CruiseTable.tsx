@@ -60,7 +60,7 @@ export const CruiseTable: React.FC = () => {
     });
 
   return (
-    <main>
+    <main style={{ maxHeight: '100vh' }}>
       <Typography variant='h1'>GMT Cruises</Typography>
       <div className='flex justify-end w-full items-center py-3 px-3'>
         <Typography variant='h5' className='mr-2'>
@@ -77,9 +77,9 @@ export const CruiseTable: React.FC = () => {
         />
       </div>
 
-      <Card className='h-full w-full overflow-scroll'>
+      <Card className='h-full w-full table-wrp block'>
         <table className='w-full min-w-max table-auto text-left'>
-          <thead>
+          <thead className='sticky top-0'>
             <tr>
               {columns.map((column) => {
                 return (
