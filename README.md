@@ -1,4 +1,16 @@
-# Tide-Pool :ocean:
+# GMT Cruise Ship Table
+
+This repository contains a simple application, which fetches cruise ship data from [Global Multi-Resolution Topography Data Synthesis (GMRT)](https://www.gmrt.org/). The cursory data fetched is displayed in a table, which is sortable and filterable by the user.
+
+Since the boilerplate code is already using redux toolkit, it was an easy choice to use RTK Query to do the data fetching. While a tiny application like this could probably stand to store data inside a component, that is rarely a good idea in complex applications.
+
+I brought in material-tailwind to make it quick and easy to set up good-looking components for tables, search bars, etc.
+
+One feature I would have liked to add to this would be a customization dialog, where the user can select what data columns they want to see. I opted to only show the few columns that made sense to me, but allowing users to customize complex tables would probably be worthwhile.
+
+# Original Readme
+
+From (https://github.com/Bedrock-Ocean-Open-Source/tide-pool)
 
 ## About
 

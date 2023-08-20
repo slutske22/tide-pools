@@ -1,6 +1,9 @@
 /* eslint-disable no-undef */
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+
+import withMT from '@material-tailwind/react/utils/withMT';
+
+module.exports = withMT({
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     fontFamily: {
@@ -10,4 +13,4 @@ module.exports = {
     extend: {},
   },
   plugins: [],
-};
+});
