@@ -31,6 +31,10 @@ const columns: { name: string; value: keyof Cruise }[] = [
     name: 'Device Model',
     value: 'device_model',
   },
+  {
+    name: 'Total Area',
+    value: 'total_area',
+  },
 ];
 
 /**
@@ -52,29 +56,37 @@ export const CruiseTable: React.FC = () => {
         cruise.device_make?.toLowerCase().includes(search.toLowerCase().trim()),
     )
     .sort((a, b) => {
-      // @ts-expect-error TS worried about null values, doesn't matter here
       if (a[sortColumn] > b[sortColumn]) return sortOrder === 'asc' ? -1 : 1;
-      // @ts-expect-error TS worried about null values, doesn't matter here
       if (a[sortColumn] <= b[sortColumn]) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
 
+  const totalArea = list.reduce((acc, cur) => {
+    if (Number(cur.total_area)) {
+      return acc + Number(cur.total_area);
+    }
+    return acc;
+  }, 0);
+
   return (
     <main style={{ maxHeight: '100vh' }}>
       <Typography variant='h1'>GMRT Cruises</Typography>
-      <div className='flex justify-end w-full items-center py-3 px-3'>
-        <Typography variant='h5' className='mr-2'>
-          Search by Ship Name or Cruise Entry ID:{' '}
-        </Typography>
-        <Input
-          containerProps={{
-            style: { width: '400px' },
-          }}
-          value={search}
-          onChange={(e) => {
-            dispatch(filterSlice.actions.setSearch(e.target.value));
-          }}
-        />
+      <div className='flex justify-between w-full items-center py-3 px-3'>
+        <div className='flex  items-center py-3'>
+          <Typography variant='h5' className='mr-2'>
+            Search by Ship Name or Cruise Entry ID:{' '}
+          </Typography>
+          <Input
+            containerProps={{
+              style: { width: '400px' },
+            }}
+            value={search}
+            onChange={(e) => {
+              dispatch(filterSlice.actions.setSearch(e.target.value));
+            }}
+          />
+        </div>
+        <Typography variant='h5'>Total Area: {totalArea.toLocaleString()}</Typography>
       </div>
 
       <Card className='h-full w-full table-wrp block'>
